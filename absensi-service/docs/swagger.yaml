@@ -1,0 +1,66 @@
+components:
+  schemas:
+    KaryawanRequest:
+      type: object
+      required:
+        - nomor_induk_karyawan
+        - nama_karyawan
+        - jabatan
+        - direktorat
+      properties:
+        nomor_induk_karyawan:
+          type: string
+        nama_karyawan:
+          type: string
+        jabatan:
+          type: string
+        direktorat:
+          type: string
+
+    Karyawan:
+      type: object
+      properties:
+        id:
+          type: string
+        nomor_induk_karyawan:
+          type: string
+        nama_karyawan:
+          type: string
+        jabatan:
+          type: string
+        direktorat:
+          type: string
+
+    SuccessResponseKaryawan:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/Karyawan"
+
+    SuccessResponseKaryawanList:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Karyawan"
+
+    SuccessResponseMessage:
+      type: object
+      properties:
+        message:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string

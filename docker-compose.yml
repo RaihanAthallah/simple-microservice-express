@@ -1,0 +1,79 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Raihan123@
+      MYSQL_DATABASE: simple-microservice
+      MYSQL_USER: raihan
+      MYSQL_PASSWORD: Raihan123@
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - backend
+
+  login-service:
+    build: ./login-service
+    container_name: login-service
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: raihan
+      DB_PASSWORD: Raihan123@
+      DB_NAME: simple-microservice
+    networks:
+      - backend
+
+  absensi-service:
+    build: ./absensi-service
+    container_name: absensi-service
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: raihan
+      DB_PASSWORD: Raihan123@
+      DB_NAME: simple-microservice
+    networks:
+      - backend
+
+  karyawan-service:
+    build: ./karyawan-service
+    container_name: karyawan-service
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: raihan
+      DB_PASSWORD: Raihan123@
+      DB_NAME: simple-microservice
+    networks:
+      - backend
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    depends_on:
+      - login-service
+      - absensi-service
+      - karyawan-service
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+
+volumes:
+  mysql_data:
+
+networks:
+  backend:
+    driver: bridge
