@@ -54,5 +54,6 @@ build/
 .pids
 *.pm2.log
 
-/uploads/*
+/uploads/absensi/*
 !/uploads/.gitkeep
+!/uploads/absensi/.gitkeep
