@@ -11,6 +11,10 @@ Proyek ini menggunakan arsitektur **microservices**, di mana setiap layanan dapa
 3. **Absensi Service**: Mengelola data kehadiran karyawan.
 
 Setiap layanan menerima permintaan langsung dari klien tanpa menggunakan API Gateway dan berkomunikasi antar layanan jika diperlukan.
+## Desain Database
+![image](https://github.com/user-attachments/assets/cf0574bc-711a-4dd4-9b2b-3ddbeeefa111)
+
+
 
 ## Struktur Proyek
 
