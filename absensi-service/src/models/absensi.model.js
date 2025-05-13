@@ -1,12 +1,12 @@
-class KaryawanDetail {
-  constructor({ id = null, nomor_induk_karyawan = "", nama_karyawan = "", direktorat = "", jabatan = "", role = "" }) {
-    this.id = id;
-    this.nomor_induk_karyawan = nomor_induk_karyawan;
-    this.nama_karyawan = nama_karyawan;
-    this.direktorat = direktorat;
-    this.jabatan = jabatan;
-    this.role = role;
+class AbsensiDetail {
+  constructor({ id_karyawan, tanggal_kehadiran, jam_kehadiran, jam_kepulangan, created_by, url_foto }) {
+    this.id_karyawan = id_karyawan;
+    this.tanggal_kehadiran = tanggal_kehadiran;
+    this.jam_kehadiran = jam_kehadiran;
+    this.jam_kepulangan = jam_kepulangan;
+    this.created_by = created_by;
+    this.url_foto = url_foto;
   }
 }
 
-module.exports = KaryawanDetail;
+module.exports = AbsensiDetail;

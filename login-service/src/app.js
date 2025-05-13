@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const cors = require("cors");
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../docs/swagger");
@@ -13,6 +15,12 @@ const AuthRoute = require("./routes/auth.route");
 
 const app = express();
 app.use(bodyParser.json());
+app.use(morgan("combined"));
+app.use(
+  cors({
+    origin: "*", // This allows all origins
+  })
+);
 
 // Inject dependencies
 const authRepository = AuthRepository(db);
@@ -22,6 +30,6 @@ const authRoute = AuthRoute(authController);
 
 // Register route
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use("/api/v1/auth", authRoute);
+app.use("/login-service/api/v1/auth", authRoute);
 
 module.exports = app;

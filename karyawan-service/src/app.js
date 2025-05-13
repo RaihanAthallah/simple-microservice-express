@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const cors = require("cors");
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../docs/swagger");
@@ -13,6 +15,12 @@ const KaryawanRoute = require("./routes/karyawan.route");
 
 const app = express();
 app.use(bodyParser.json());
+app.use(morgan("combined"));
+app.use(
+  cors({
+    origin: "*", // This allows all origins
+  })
+);
 
 // Inject dependencies
 const karyawanRepository = KaryawanRepository(db);
@@ -22,6 +30,6 @@ const karyawanRoute = KaryawanRoute(karyawanController);
 
 // Register route
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use("/api/v1/karyawan", karyawanRoute);
+app.use("/karyawan-service/api/v1/karyawan", karyawanRoute);
 
 module.exports = app;

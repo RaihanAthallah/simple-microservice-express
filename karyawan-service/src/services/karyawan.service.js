@@ -33,6 +33,12 @@ function KaryawanService(karyawanRepository) {
 
   async function createKaryawan(data) {
     try {
+      //check if nomor_induk_karyawan already exists
+      const existingKaryawan = await karyawanRepository.getKaryawanById(data.nomor_induk_karyawan);
+      if (existingKaryawan) {
+        throw new CustomError(400, "Nomor induk karyawan sudah ada");
+      }
+
       const karyawan = await karyawanRepository.createKaryawan(data);
       if (!karyawan) {
         throw new CustomError(400, "Gagal membuat karyawan");
@@ -57,8 +63,10 @@ function KaryawanService(karyawanRepository) {
       if (!karyawan) {
         throw new CustomError(404, "Karyawan tidak ditemukan");
       }
+
       return karyawan;
     } catch (error) {
+      console.error("Error updating karyawan pada service:", error);
       if (!error.statusCode) {
         throw new CustomError(500, "Terjadi kesalahan pada server");
       }

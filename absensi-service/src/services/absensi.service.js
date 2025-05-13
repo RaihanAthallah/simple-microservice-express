@@ -1,13 +1,20 @@
 const CustomError = require("../utils/error");
+const generateImageUrl = require("../utils/image").generateImageUrl;
 
-function KaryawanService(karyawanRepository) {
-  async function getKaryawanById(id) {
+function AbsensiService(absensiRepository) {
+  async function createAbsensi(data) {
     try {
-      const karyawan = await karyawanRepository.getKaryawanById(id);
-      if (!karyawan) {
-        throw new CustomError(404, "Karyawan tidak ditemukan");
+      const existingAbsensi = await absensiRepository.getAbsensiByIDKaryawanToday(data.id_karyawan, data.tanggal_kehadiran);
+      if (existingAbsensi) {
+        throw new CustomError(400, "Absensi sudah ada untuk tanggal ini");
       }
-      return karyawan;
+
+      console.log("Data yang diterima untuk absensi:", data);
+      const absensi = await absensiRepository.createAbsensi(data);
+      if (!absensi) {
+        throw new CustomError(400, "Gagal membuat absensi");
+      }
+      return absensi;
     } catch (error) {
       if (!error.statusCode) {
         throw new CustomError(500, "Terjadi kesalahan pada server");
@@ -16,13 +23,10 @@ function KaryawanService(karyawanRepository) {
     }
   }
 
-  async function getAllKaryawan() {
+  async function getAllAbsensiByIdKaryawan(id_karyawan) {
     try {
-      const karyawanList = await karyawanRepository.getAllKaryawan();
-      if (!karyawanList || karyawanList.length === 0) {
-        throw new CustomError(404, "Tidak ada karyawan ditemukan");
-      }
-      return karyawanList;
+      const absensiList = await absensiRepository.getAllAbsensiByIdKaryawan(id_karyawan);
+      return absensiList;
     } catch (error) {
       if (!error.statusCode) {
         throw new CustomError(500, "Terjadi kesalahan pada server");
@@ -31,13 +35,17 @@ function KaryawanService(karyawanRepository) {
     }
   }
 
-  async function createKaryawan(data) {
+  async function getAbsensiDetailById(req, id) {
     try {
-      const karyawan = await karyawanRepository.createKaryawan(data);
-      if (!karyawan) {
-        throw new CustomError(400, "Gagal membuat karyawan");
+      const absensi = await absensiRepository.getAbsensiDetailById(id);
+      if (!absensi) {
+        throw new CustomError(404, "Absensi tidak ditemukan");
       }
-      return karyawan;
+
+      const imageUrl = generateImageUrl(req, absensi.url_foto);
+      absensi.url_foto = imageUrl;
+
+      return absensi;
     } catch (error) {
       if (!error.statusCode) {
         throw new CustomError(500, "Terjadi kesalahan pada server");
@@ -46,18 +54,18 @@ function KaryawanService(karyawanRepository) {
     }
   }
 
-  async function updateKaryawan(id, data) {
+  async function updateKepulangan(id, data) {
     try {
-      const dataKaryawan = await karyawanRepository.getKaryawanById(id);
-      if (!dataKaryawan) {
-        throw new CustomError(404, "Karyawan tidak ditemukan");
+      const absensi = await absensiRepository.getAbsensiDetailById(id);
+      if (!absensi) {
+        throw new CustomError(404, "Absensi tidak ditemukan");
       }
 
-      const karyawan = await karyawanRepository.updateDataKaryawan(id, data);
-      if (!karyawan) {
-        throw new CustomError(404, "Karyawan tidak ditemukan");
+      const updatedAbsensi = await absensiRepository.updateKepulangan(id, data);
+      if (!updatedAbsensi) {
+        throw new CustomError(404, "Absensi tidak ditemukan");
       }
-      return karyawan;
+      return updatedAbsensi;
     } catch (error) {
       if (!error.statusCode) {
         throw new CustomError(500, "Terjadi kesalahan pada server");
@@ -66,15 +74,20 @@ function KaryawanService(karyawanRepository) {
     }
   }
 
-  async function deleteKaryawan(id) {
+  async function getAbsensiByIDKaryawanToday(req, id_karyawan, tanggal) {
     try {
-      const result = await karyawanRepository.deleteKaryawan(id);
-      if (!result) {
-        throw new CustomError(404, "Karyawan tidak ditemukan");
+      const absensi = await absensiRepository.getAbsensiByIDKaryawanToday(id_karyawan, tanggal);
+      if (!absensi) {
+        return null; // Absensi tidak ditemukan
       }
-      return { message: "Karyawan berhasil dihapus" };
+
+      const imageUrl = generateImageUrl(req, absensi.url_foto);
+      absensi.url_foto = imageUrl;
+
+      return absensi;
     } catch (error) {
       if (!error.statusCode) {
+        console.error("Error pada getAbsensiByIDKaryawanToday:", error);
         throw new CustomError(500, "Terjadi kesalahan pada server");
       }
       throw error;
@@ -82,12 +95,12 @@ function KaryawanService(karyawanRepository) {
   }
 
   return {
-    getKaryawanById,
-    getAllKaryawan,
-    createKaryawan,
-    updateKaryawan,
-    deleteKaryawan,
+    createAbsensi,
+    getAllAbsensiByIdKaryawan,
+    getAbsensiDetailById,
+    updateKepulangan,
+    getAbsensiByIDKaryawanToday,
   };
 }
 
-module.exports = KaryawanService;
+module.exports = AbsensiService;

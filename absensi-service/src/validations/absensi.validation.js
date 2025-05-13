@@ -1,18 +1,20 @@
 const Joi = require("joi");
 
-const createKaryawanSchema = Joi.object({
-  nomor_induk_karyawan: Joi.string().required().messages({
-    "string.empty": "Nomor Induk Karyawan wajib diisi",
+const createAbsensiSchema = Joi.object({
+  id_karyawan: Joi.string().required().messages({
+    "string.empty": "ID Karyawan wajib diisi",
   }),
-  nama_karyawan: Joi.string().required().messages({
-    "string.empty": "Nama Karyawan wajib diisi",
+  tanggal_absen: Joi.string().required().messages({
+    "string.empty": "Tanggal Absen wajib diisi",
   }),
-  jabatan: Joi.string().required().messages({
-    "string.empty": "Jabatan wajib diisi",
+  jam_absen: Joi.string().required().messages({
+    "string.empty": "Jam Absen wajib diisi",
   }),
-  direktorat: Joi.string().allow(null, "").optional(), // direktorat opsional
+  url_foto: Joi.string().required().messages({
+    "string.empty": "URL Foto wajib diisi",
+  }),
 });
 
 module.exports = {
-  createKaryawanSchema,
+  createAbsensiSchema,
 };

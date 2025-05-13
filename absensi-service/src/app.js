@@ -3,25 +3,36 @@ const bodyParser = require("body-parser");
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../docs/swagger");
+const morgan = require("morgan");
+const path = require("path");
 
 // Dependency Injection
 const db = require("./config/db");
-const KaryawanRepository = require("./repositories/karyawan.repository");
-const KaryawanService = require("./services/karyawan.service");
-const KaryawanController = require("./controllers/absensi.controller");
-const KaryawanRoute = require("./routes/karyawan.route");
+const AbsensiRepository = require("./repositories/absensi.repository");
+const AbsensiService = require("./services/absensi.service");
+const AbsensiController = require("./controllers/absensi.controller");
+const AbsensiRoute = require("./routes/absensi.route");
 
 const app = express();
+const cors = require("cors");
 app.use(bodyParser.json());
+app.use(morgan("combined"));
+app.use(
+  cors({
+    origin: "*", // This allows all origins
+  })
+);
 
 // Inject dependencies
-const karyawanRepository = KaryawanRepository(db);
-const karyawanService = KaryawanService(karyawanRepository);
-const karyawanController = KaryawanController(karyawanService);
-const karyawanRoute = KaryawanRoute(karyawanController);
+const absensiRepository = AbsensiRepository(db);
+const absensiService = AbsensiService(absensiRepository);
+const absensiController = AbsensiController(absensiService);
+const absensiRoute = AbsensiRoute(absensiController);
 
 // Register route
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use("/api/v1/karyawan", karyawanRoute);
+app.use("/absensi-service/api/v1/absensi", absensiRoute);
+// Serve folder "uploads" secara publik
+app.use("/absensi-service", express.static(path.join(__dirname, "../uploads/absensi")));
 
 module.exports = app;

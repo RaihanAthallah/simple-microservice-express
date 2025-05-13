@@ -3,17 +3,35 @@ version: "3.8"
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql
+    container_name: mysql-2
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: Raihan123@
-      MYSQL_DATABASE: simple-microservice
+      MYSQL_DATABASE: microservices
       MYSQL_USER: raihan
       MYSQL_PASSWORD: Raihan123@
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./migrations/init:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "raihan", "-pRaihan123@"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  db-migration:
+    image: flyway/flyway:9.8.3
+    container_name: db-migration
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/flyway/sql
+    command: -url=jdbc:mysql://mysql:3306/microservices -user=root -password=Raihan123@ -connectRetries=60 migrate
     networks:
       - backend
 
@@ -21,55 +39,72 @@ services:
     build: ./login-service
     container_name: login-service
     depends_on:
-      - mysql
+      - db-migration
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_USER: raihan
+      DB_USER: root
       DB_PASSWORD: Raihan123@
-      DB_NAME: simple-microservice
+      DB_NAME: microservices
+      JWT_SECRET: your_jwt_secret_key_here
+      PORT: 3002
+    ports:
+      - "3002:3002"
     networks:
       - backend
+    restart: unless-stopped
 
   absensi-service:
     build: ./absensi-service
     container_name: absensi-service
     depends_on:
-      - mysql
+      - db-migration
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_USER: raihan
+      DB_USER: root
       DB_PASSWORD: Raihan123@
-      DB_NAME: simple-microservice
+      DB_NAME: microservices
+      JWT_SECRET: your_jwt_secret_key_here
+      PORT: 3003
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./absensi-service/uploads:/app/uploads
     networks:
       - backend
+    restart: unless-stopped
 
   karyawan-service:
     build: ./karyawan-service
     container_name: karyawan-service
     depends_on:
-      - mysql
+      - db-migration
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_USER: raihan
+      DB_USER: root
       DB_PASSWORD: Raihan123@
-      DB_NAME: simple-microservice
-    networks:
-      - backend
-
-  api-gateway:
-    build: ./api-gateway
-    container_name: api-gateway
-    depends_on:
-      - login-service
-      - absensi-service
-      - karyawan-service
+      DB_NAME: microservices
+      JWT_SECRET: your_jwt_secret_key_here
+      PORT: 3001
     ports:
-      - "8080:8080"
+      - "3001:3001"
     networks:
       - backend
+    restart: unless-stopped
+
+  # api-gateway:
+  #   build: ./api-gateway
+  #   container_name: api-gateway
+  #   depends_on:
+  #     - login-service
+  #     - absensi-service
+  #     - karyawan-service
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - backend
 
 volumes:
   mysql_data:

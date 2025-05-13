@@ -1,7 +1,7 @@
 const { successResponse, errorResponse } = require("../utils/response");
 const CustomError = require("../utils/error");
 const KaryawanDetail = require("../models/karyawan.model");
-const { createKaryawanSchema } = require("../validations/karyawan.validation");
+const { createKaryawanSchema, updateKaryawanSchema } = require("../validations/karyawan.validation");
 
 function KaryawanController(karyawanService) {
   async function getKaryawanById(req, res) {
@@ -56,17 +56,21 @@ function KaryawanController(karyawanService) {
       }
 
       const { nomor_induk_karyawan, nama_karyawan, jabatan, direktorat } = req.body;
+      const created_by = req.user.nama;
+      console.log("Created by:", created_by);
 
       const karyawanDetail = new KaryawanDetail({
         nomor_induk_karyawan,
         nama_karyawan,
-        jabatan,
         direktorat,
+        jabatan,
+        created_by,
       });
 
       const newKaryawan = await karyawanService.createKaryawan(karyawanDetail);
       return res.status(201).json(successResponse("Karyawan berhasil ditambahkan", newKaryawan));
     } catch (error) {
+      console.error("Error creating karyawan:", error);
       if (error instanceof CustomError) {
         return res.status(error.statusCode).json(errorResponse(error.message));
       }
@@ -79,19 +83,22 @@ function KaryawanController(karyawanService) {
     try {
       const { id } = req.params;
 
-      const { error } = createKaryawanSchema.validate(req.body, { abortEarly: false });
+      const { error } = updateKaryawanSchema.validate(req.body, { abortEarly: false });
       if (error) {
         const messages = error.details.map((err) => err.message);
         return res.status(400).json(errorResponse(messages));
       }
 
       const { nomor_induk_karyawan, nama_karyawan, jabatan, direktorat } = req.body;
+      const updated_by = req.user.nama;
+      console.log("Updated by:", updated_by);
 
       const karyawanDetail = new KaryawanDetail({
         nomor_induk_karyawan,
         nama_karyawan,
         jabatan,
         direktorat,
+        updated_by,
       });
 
       const updatedKaryawan = await karyawanService.updateKaryawan(id, karyawanDetail);
@@ -101,6 +108,7 @@ function KaryawanController(karyawanService) {
 
       return res.status(200).json(successResponse("Karyawan berhasil diperbarui", updatedKaryawan));
     } catch (error) {
+      console.error("Error updating karyawan:", error);
       if (error instanceof CustomError) {
         return res.status(error.statusCode).json(errorResponse(error.message));
       }

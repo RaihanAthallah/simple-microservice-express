@@ -1,6 +1,6 @@
 function authRepository(db) {
   async function getUserByNomorIndukKaryawan(nomor_induk_karyawan) {
-    const [rows] = await db.query("SELECT * FROM users WHERE nomor_induk_karyawan = ?", [nomor_induk_karyawan]);
+    const [rows] = await db.query("SELECT * FROM users,data_karyawan WHERE users.nomor_induk_karyawan = ? AND users.nomor_induk_karyawan = data_karyawan.nomor_induk_karyawan", [nomor_induk_karyawan]);
     return rows[0];
   }
 

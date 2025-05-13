@@ -4,13 +4,27 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Karyawan Service API",
+      title: "Absensi Service API",
       version: "1.0.0",
-      description: "Dokumentasi API Karyawan Service",
+      description: "Dokumentasi API Absensi Service",
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     servers: [
       {
-        url: "http://localhost:3000/api/v1",
+        url: "http://localhost:3003/absensi-service/api/v1",
       },
     ],
   },
@@ -19,7 +33,6 @@ const options = {
     "./docs/*.yaml", // Path to your YAML or JSON files with schema definitions
   ],
 };
-
 
 const swaggerSpec = swaggerJSDoc(options);
 module.exports = swaggerSpec;

@@ -8,9 +8,23 @@ const options = {
       version: "1.0.0",
       description: "Dokumentasi API Karyawan Service",
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     servers: [
       {
-        url: "http://localhost:3000/api/v1",
+        url: "http://localhost:3001/karyawan-service/api/v1",
       },
     ],
   },
@@ -19,7 +33,6 @@ const options = {
     "./docs/*.yaml", // Path to your YAML or JSON files with schema definitions
   ],
 };
-
 
 const swaggerSpec = swaggerJSDoc(options);
 module.exports = swaggerSpec;

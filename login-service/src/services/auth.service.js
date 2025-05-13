@@ -15,8 +15,15 @@ function UserService(userRepository) {
         throw new CustomError(401, "Username atau password salah");
       }
 
-      const accessToken = generateAccessToken(user);
-      const refreshToken = generateRefreshToken(user);
+      tokenCredentials = {
+        id: user.id,
+        nomor_induk_karyawan: user.nomor_induk_karyawan,
+        nama_karyawan: user.nama_karyawan,
+        role: user.role,
+      };
+
+      const accessToken = generateAccessToken(tokenCredentials);
+      const refreshToken = generateRefreshToken(tokenCredentials);
 
       return { accessToken: accessToken, refreshToken: refreshToken };
     } catch (error) {

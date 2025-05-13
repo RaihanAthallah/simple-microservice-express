@@ -1,13 +1,14 @@
 const express = require("express");
+const authMiddleware = require("../middlewares/auth.middleware");
 
 function KaryawanRoute(karyawanController) {
   const router = express.Router();
 
-  router.get("/", karyawanController.getAllKaryawan);
-  router.get("/:id", karyawanController.getKaryawanById);
-  router.post("/", karyawanController.createKaryawan);
-  router.put("/:id", karyawanController.updateKaryawan);
-  router.delete("/:id", karyawanController.deleteKaryawan);
+  router.get("/", authMiddleware, karyawanController.getAllKaryawan);
+  router.get("/:id", authMiddleware, karyawanController.getKaryawanById);
+  router.post("/", authMiddleware, karyawanController.createKaryawan);
+  router.put("/:id", authMiddleware, karyawanController.updateKaryawan);
+  router.delete("/:id", authMiddleware, karyawanController.deleteKaryawan);
 
   return router;
 }
@@ -27,6 +28,8 @@ module.exports = KaryawanRoute;
  *   get:
  *     summary: Mendapatkan daftar semua karyawan
  *     tags: [Karyawan]
+ *     security:
+ *      - bearerAuth: []
  *     responses:
  *       200:
  *         description: Daftar karyawan berhasil diambil
@@ -48,6 +51,8 @@ module.exports = KaryawanRoute;
  *   get:
  *     summary: Mendapatkan data karyawan berdasarkan ID
  *     tags: [Karyawan]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -80,6 +85,8 @@ module.exports = KaryawanRoute;
  *   post:
  *     summary: Menambahkan data karyawan baru
  *     tags: [Karyawan]
+ *     security:
+ *      - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -113,6 +120,8 @@ module.exports = KaryawanRoute;
  *   put:
  *     summary: Memperbarui data karyawan berdasarkan ID
  *     tags: [Karyawan]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -155,6 +164,8 @@ module.exports = KaryawanRoute;
  *   delete:
  *     summary: Menghapus data karyawan berdasarkan ID
  *     tags: [Karyawan]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

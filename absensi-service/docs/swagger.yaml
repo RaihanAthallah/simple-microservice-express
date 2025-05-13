@@ -1,23 +1,23 @@
 components:
   schemas:
-    KaryawanRequest:
+    AbsensiRequest:
       type: object
       required:
-        - nomor_induk_karyawan
-        - nama_karyawan
+        - tanggal_kehadiran
+        - jam_kehadiran
         - jabatan
         - direktorat
       properties:
-        nomor_induk_karyawan:
+        tanggal_kehadiran:
           type: string
-        nama_karyawan:
+        jam_kehadiran:
           type: string
         jabatan:
           type: string
         direktorat:
           type: string
 
-    Karyawan:
+    Absensi:
       type: object
       properties:
         id:
@@ -31,15 +31,15 @@ components:
         direktorat:
           type: string
 
-    SuccessResponseKaryawan:
+    SuccessResponseAbsensi:
       type: object
       properties:
         message:
           type: string
         data:
-          $ref: "#/components/schemas/Karyawan"
+          $ref: "#/components/schemas/Absensi"
 
-    SuccessResponseKaryawanList:
+    SuccessResponseAbsensiList:
       type: object
       properties:
         message:
@@ -47,7 +47,7 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/Karyawan"
+            $ref: "#/components/schemas/Absensi"
 
     SuccessResponseMessage:
       type: object
