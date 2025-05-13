@@ -188,7 +188,3 @@ Karena tidak menggunakan API Gateway, maka alur autentikasi adalah sebagai berik
 ---
 
 Dikembangkan dengan ❤️ oleh Raihan Athallah
-
----
-
-Jika Anda ingin, saya juga bisa bantu menambahkan versi Bahasa Indonesia dan Inggris secara berdampingan di README-nya.
